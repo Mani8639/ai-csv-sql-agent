@@ -123,6 +123,26 @@ if uploaded_file is not None:
                 ORDER BY price DESC
                 LIMIT 1
                 """
+            elif (
+                "column wise" in question_lower
+                and (
+                "missing" in question_lower
+                or "null" in question_lower
+                )
+            ):
+
+                temp = []
+
+                for col in df.columns:
+                    temp.append(
+                        f'SUM(CASE WHEN "{col}" IS NULL THEN 1 ELSE 0 END) AS "{col}_missing"'
+                    )
+
+                sql_query = f"""
+                SELECT
+                {', '.join(temp)}
+                FROM {table_name}
+                 """
 
             else:
 
